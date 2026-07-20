@@ -12,6 +12,18 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
+
+@app.after_request
+def set_security_headers(response):
+    """Add baseline browser protections so the DAST lab starts green."""
+    response.headers["Content-Security-Policy"] = "default-src 'self'"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    return response
+
+
 # ---------------------------------------------------------------------------
 # Dati mock – in produzione verrebbero da un DB
 # ---------------------------------------------------------------------------
@@ -50,6 +62,9 @@ def health():
 def studenti():
     return jsonify({"studenti": STUDENTI, "totale": len(STUDENTI)}), 200
 
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({"error": "Not Found"}), 404
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
