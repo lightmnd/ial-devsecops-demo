@@ -62,6 +62,10 @@ def health():
 def studenti():
     return jsonify({"studenti": STUDENTI, "totale": len(STUDENTI)}), 200
 
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({"error": "Internal Server Error"}), 500
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({"error": "Not Found"}), 404
