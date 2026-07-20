@@ -34,14 +34,14 @@ STUDENTI = [
 ]
 
 
-@app.route("/")
+@app.route("/")  # root
 def home():
     return (
         "<h1>Gestionale IAL</h1>"
         "<p>Demo app per la lezione DevSecOps.</p>"
         "<ul>"
-        "<li><a href='/api/health'>/api/health</a></li>"
-        "<li><a href='/api/studenti'>/api/studenti</a></li>"
+            "<li><a href='/api/health'>/api/health</a></li>"
+            "<li><a href='/api/studenti'>/api/studenti</a></li>"
         "</ul>"
     ), 200
 
@@ -57,6 +57,13 @@ def health():
         }
     ), 200
 
+@app.route("/api/studenti/<int:studente_id>")
+def studente(studente_id):
+    studente = next((s for s in STUDENTI if s["id"] == studente_id), None)
+    if studente:
+        return jsonify(studente), 200
+    else:
+        return jsonify({"error": "Studente non trovato"}), 404
 
 @app.route("/api/studenti")
 def studenti():
